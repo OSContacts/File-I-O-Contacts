@@ -4,9 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Contact {
     public Contact() throws IOException {
@@ -24,10 +22,21 @@ public class Contact {
     }
 }
 
-public static void addFile() throws IOException {
+public static String getNewContact(){
+    Scanner in = new Scanner(System.in);
+    System.out.print("Enter First name: ");
+    String firstName = in.next();
+    System.out.print("Enter Last name: ");
+    String lastName = in.next();
+    System.out.print("Enter Phone #: ");
+    Long number = in.nextLong();
+    return firstName + "@" + lastName + " "  + number;
+}
+
+public static void addFile(String newContact) throws IOException {
     Files.write(
             Paths.get("data", "contacts.txt"),
-            Arrays.asList("eggs"), // list with one item
+            Arrays.asList(newContact), // list with one item
             StandardOpenOption.APPEND
     );
 }
@@ -38,7 +47,13 @@ public static void  chooseOption () throws IOException {
         choice=getInput();
         switch (choice){
             case 1 : getAllContacts();
-            case 2: addFile();
+                    continue;
+            case 2 : addFile(getNewContact());
+                    continue;
+            case 3 : search(getKey());
+                    continue;
+            case 4 : delete(getKey());
+
         }
 
     }while (choice !=5);
@@ -51,9 +66,55 @@ public static void getAllContacts() throws IOException {
     List<String> contactList = Files.readAllLines(contactsPath);
 
     for (int i = 0; i < contactList.size(); i += 1) {
-        System.out.println((i + 1) + ": " + contactList.get(i));
+        if(!contactList.get(i).equals("")) {
+            System.out.println(contactList.get(i));
+        }
     }
 }
+
+public static HashMap putDataInHash() throws IOException {
+    Path contactsPath = Paths.get("data", "contacts.txt");
+    List<String> contactList = Files.readAllLines(contactsPath);
+
+    HashMap<String, String> contacts = new HashMap<>();
+    for(String contact : contactList) {
+        String[] data = contact.split(" ");
+        contacts.put(data[0], contact);
+    }
+    return contacts;
+}
+
+public static void search(String query) throws IOException {
+        HashMap table = putDataInHash();
+
+    System.out.println(table.get(query));
+
+}
+
+public static String getKey(){
+    Scanner in = new Scanner(System.in);
+    System.out.print("Enter First Last: ");
+    return String.join("@", in.nextLine().split(" "));
+}
+
+public static void delete(String query) throws IOException {
+    List<String> lines = Files.readAllLines(Paths.get("data", "contacts.txt"));
+    List<String> newList = new ArrayList<>();
+
+    for (String line : lines) {
+        HashMap table = putDataInHash();
+        Object searchString = table.get(query);
+        if (line.equals(searchString)) {
+            newList.add("");
+            continue;
+        }
+        newList.add(line);
+    }
+
+    Files.write(Paths.get("data", "contacts.txt"), newList);
+
+}
+
     public static void main(String[] args) throws IOException {
         displayMenu();
 
@@ -69,9 +130,7 @@ public static void getAllContacts() throws IOException {
                 "5. Exit.\n" +
                 "Enter an option (1, 2, 3, 4 or 5):");
 
-chooseOption();
-addFile();
-
+        chooseOption();
 
     }
     }
