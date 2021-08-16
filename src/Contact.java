@@ -47,12 +47,16 @@ public static void  chooseOption () throws IOException {
         choice=getInput();
         switch (choice){
             case 1 : getAllContacts();
+                    displayMenu();
                     continue;
             case 2 : addFile(getNewContact());
+                    displayMenu();
                     continue;
             case 3 : search(getKey());
+                    displayMenu();
                     continue;
             case 4 : delete(getKey());
+                    displayMenu();
 
         }
 
@@ -67,7 +71,10 @@ public static void getAllContacts() throws IOException {
 
     for (int i = 0; i < contactList.size(); i += 1) {
         if(!contactList.get(i).equals("")) {
-            System.out.println(contactList.get(i));
+            String line = contactList.get(i);
+            String[] nameHalf = line.split(" ");
+            String[] name = nameHalf[0].split("@");
+            System.out.println(name[0] + " " + name[1] + " " + nameHalf[1]);
         }
     }
 }
@@ -131,7 +138,6 @@ public static void delete(String query) throws IOException {
                 "Enter an option (1, 2, 3, 4 or 5):");
 
         chooseOption();
-
     }
     }
 
