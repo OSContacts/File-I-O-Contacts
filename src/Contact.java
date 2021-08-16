@@ -111,11 +111,10 @@ public static void delete(String query) throws IOException {
     for (String line : lines) {
         HashMap table = putDataInHash();
         Object searchString = table.get(query);
-        if (line.equals(searchString)) {
-            newList.add("");
-            continue;
+        if(!line.contains((CharSequence) searchString)) {
+            newList.add(line);
         }
-        newList.add(line);
+
     }
 
     Files.write(Paths.get("data", "contacts.txt"), newList);
